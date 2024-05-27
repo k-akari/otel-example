@@ -14,5 +14,6 @@ func main() {
 }
 
 func run(_ context.Context) error {
+	_ = mustNewConfig()
 	return nil
 }
