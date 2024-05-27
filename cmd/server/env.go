@@ -7,6 +7,7 @@ import (
 )
 
 type env struct {
+	Port int `envconfig:"PORT" default:"8080"`
 }
 
 func mustNewConfig() *env {
