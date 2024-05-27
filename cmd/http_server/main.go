@@ -7,8 +7,13 @@ import (
 	"net"
 	"os"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	"github.com/k-akari/otel-example/internal/handler/httphandler"
-	"github.com/k-akari/otel-example/internal/infra/otel"
+	internal_otel "github.com/k-akari/otel-example/internal/infra/otel"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -21,7 +26,7 @@ func main() {
 func run(ctx context.Context) error {
 	env := mustNewConfig()
 
-	_, close, err := otel.NewTracer(ctx, "http_server", env.GCPProjectID)
+	_, close, err := internal_otel.NewTracer(ctx, "http_server", env.GCPProjectID)
 	if err != nil {
 		return fmt.Errorf("failed to create tracer: %w", err)
 	}
@@ -32,7 +37,21 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	tsh := httphandler.NewTestService()
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler(
+			otelgrpc.WithTracerProvider(otel.GetTracerProvider()),
+			otelgrpc.WithPropagators(otel.GetTextMapPropagator()),
+		)),
+	}
+	conn, err := grpc.NewClient(env.EndpointGRPCServer, opts...)
+	if err != nil {
+		return fmt.Errorf("failed to create grpc client: %w", err)
+	}
+	defer conn.Close()
+
+	tsc := testpb.NewTestServiceClient(conn)
+	tsh := httphandler.NewTestService(tsc)
 
 	mux := newMux(tsh)
 	s := newServer(l, mux)
