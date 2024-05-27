@@ -7,8 +7,8 @@ import (
 )
 
 type env struct {
-	Port         int    `envconfig:"PORT" default:"8080"`
-	GCPProjectID string `envconfig:"GCP_PROJECT_ID" required:"true"`
+	Port           int    `envconfig:"PORT" required:"true"`
+	EndpointJaeger string `envconfig:"ENDPOINT_JAEGER" required:"true"`
 }
 
 func mustNewConfig() *env {
