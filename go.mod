@@ -6,6 +6,7 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.23.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	go.opentelemetry.io/otel v1.27.0
+	golang.org/x/sync v0.6.0
 	google.golang.org/grpc v1.64.0
 )
 
@@ -34,7 +35,6 @@ require (
 	go.opentelemetry.io/otel/metric v1.27.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/oauth2 v0.18.0 // indirect
-	golang.org/x/sync v0.6.0 // indirect
 	google.golang.org/api v0.126.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240318140521-94a12d6c2237 // indirect
@@ -42,6 +42,7 @@ require (
 )
 
 require (
+	github.com/go-chi/chi/v5 v5.0.12
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0

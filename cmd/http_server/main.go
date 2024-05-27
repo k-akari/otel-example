@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 
+	"github.com/k-akari/otel-example/internal/handler/httphandler"
 	"github.com/k-akari/otel-example/internal/infra/otel"
 )
 
@@ -31,6 +32,9 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	s := newServer(l, nil)
+	tsh := httphandler.NewTestService()
+
+	mux := newMux(tsh)
+	s := newServer(l, mux)
 	return s.run(ctx)
 }
