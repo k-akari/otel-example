@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "eamodio.gitlens",
+        "editorconfig.editorconfig",
+        "golang.go",
+        "mhutchie.git-graph",
+    ]
+}
