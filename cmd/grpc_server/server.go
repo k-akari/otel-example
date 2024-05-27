@@ -9,8 +9,8 @@ import (
 	"syscall"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
-	"github.com/k-akari/otel-example/internal/handler"
-	"github.com/k-akari/otel-example/internal/handler/interceptor"
+	handler "github.com/k-akari/otel-example/internal/handler/grpchandler"
+	"github.com/k-akari/otel-example/internal/handler/grpchandler/interceptor"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
