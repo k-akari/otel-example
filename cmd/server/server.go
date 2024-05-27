@@ -10,6 +10,7 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	"github.com/k-akari/otel-example/internal/handler"
+	"github.com/k-akari/otel-example/internal/handler/interceptor"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
@@ -22,8 +23,11 @@ type server struct {
 }
 
 func newServer(l net.Listener) *server {
+	opts := []grpc.ServerOption{
+		interceptor.UnaryServerInterceptors(),
+	}
 	return &server{
-		srv: grpc.NewServer(),
+		srv: grpc.NewServer(opts...),
 		l:   l,
 	}
 }
