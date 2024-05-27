@@ -8,6 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
+	"github.com/k-akari/otel-example/internal/handler"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
@@ -30,6 +32,8 @@ func (s *server) registerServices() {
 	reflection.Register(s.srv)
 	hs := health.NewServer()
 	healthpb.RegisterHealthServer(s.srv, hs)
+
+	testpb.RegisterTestServiceServer(s.srv, handler.NewTestService())
 }
 
 func (s *server) run(ctx context.Context) error {
