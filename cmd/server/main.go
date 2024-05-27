@@ -15,13 +15,15 @@ func main() {
 	}
 }
 
-func run(_ context.Context) error {
+func run(ctx context.Context) error {
 	env := mustNewConfig()
 
-	_, err := net.Listen("tcp", fmt.Sprintf(":%d", env.Port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", env.Port))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	return nil
+	s := newServer(l)
+	s.registerServices()
+	return s.run(ctx)
 }
