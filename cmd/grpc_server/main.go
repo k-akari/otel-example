@@ -20,16 +20,18 @@ func main() {
 func run(ctx context.Context) error {
 	env := mustNewConfig()
 
-	_, close, err := otel.NewTracer(ctx, "client", env.GCPProjectID)
+	_, close, err := otel.NewTracer(ctx, "grpc_server", env.GCPProjectID)
 	if err != nil {
 		return fmt.Errorf("failed to create tracer: %w", err)
 	}
 	defer close()
 
-	_, err = net.Listen("tcp", fmt.Sprintf(":%d", env.Port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", env.Port))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	return nil
+	s := newServer(l)
+	s.registerServices()
+	return s.run(ctx)
 }
