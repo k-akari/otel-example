@@ -26,10 +26,11 @@ func run(ctx context.Context) error {
 	}
 	defer close()
 
-	_, err = net.Listen("tcp", fmt.Sprintf(":%d", env.Port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", env.Port))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	return nil
+	s := newServer(l, nil)
+	return s.run(ctx)
 }
