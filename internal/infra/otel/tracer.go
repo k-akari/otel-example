@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func NewTracer(ctx context.Context, serviceName, endpointJaeger string) (func(), error) {
+func Init(ctx context.Context, serviceName, endpointJaeger string) (func(), error) {
 	exporter, err := newExporter(ctx, endpointJaeger)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create exporter: %w", err)

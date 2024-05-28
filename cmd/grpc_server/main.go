@@ -21,7 +21,7 @@ func main() {
 func run(ctx context.Context) error {
 	env := mustNewConfig()
 
-	close, err := otel.NewTracer(ctx, "grpc_server", env.EndpointJaeger)
+	close, err := otel.Init(ctx, "grpc_server", env.EndpointJaeger)
 	if err != nil {
 		return fmt.Errorf("failed to create tracer: %w", err)
 	}
