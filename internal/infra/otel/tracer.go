@@ -4,14 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"path/filepath"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
-)
-
-const (
-	samplingRate = 0.2
-	moduleName   = "github.com/k-akari/otel-example"
 )
 
 func NewTracer(ctx context.Context, serviceName, endpointJaeger string) (trace.Tracer, func(), error) {
@@ -28,7 +24,8 @@ func NewTracer(ctx context.Context, serviceName, endpointJaeger string) (trace.T
 	tp := newTracerProvider(exporter, resource)
 	setPropagator()
 
-	tracer := otel.Tracer(moduleName)
+	const moduleName = "github.com/k-akari/otel-example"
+	tracer := otel.Tracer(filepath.Join(moduleName, serviceName))
 	shutdown := func() {
 		if err := tp.Shutdown(ctx); err != nil {
 			log.Printf("failed to shutdown TracerProvider: %v", err)
