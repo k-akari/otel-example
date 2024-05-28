@@ -10,7 +10,7 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	handler "github.com/k-akari/otel-example/internal/handler/grpchandler"
-	"github.com/k-akari/otel-example/internal/handler/grpchandler/interceptor"
+	"github.com/k-akari/otel-example/internal/infra/interceptor"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
