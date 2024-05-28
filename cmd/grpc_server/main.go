@@ -20,7 +20,7 @@ func main() {
 func run(ctx context.Context) error {
 	env := mustNewConfig()
 
-	_, close, err := otel.NewTracer(ctx, "grpc_server", env.EndpointJaeger)
+	tracer, close, err := otel.NewTracer(ctx, "grpc_server", env.EndpointJaeger)
 	if err != nil {
 		return fmt.Errorf("failed to create tracer: %w", err)
 	}
@@ -31,7 +31,7 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	s := newServer(l)
+	s := newServer(l, tracer)
 	s.registerServices()
 	return s.run(ctx)
 }

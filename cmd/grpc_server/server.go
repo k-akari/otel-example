@@ -11,6 +11,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	handler "github.com/k-akari/otel-example/internal/handler/grpchandler"
 	"github.com/k-akari/otel-example/internal/handler/grpchandler/interceptor"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
@@ -22,9 +23,9 @@ type server struct {
 	l   net.Listener
 }
 
-func newServer(l net.Listener) *server {
+func newServer(l net.Listener, tracer trace.Tracer) *server {
 	opts := []grpc.ServerOption{
-		interceptor.UnaryServerInterceptors(),
+		interceptor.UnaryServerInterceptors(tracer),
 	}
 	return &server{
 		srv: grpc.NewServer(opts...),
