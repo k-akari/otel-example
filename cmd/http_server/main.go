@@ -9,7 +9,6 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	"github.com/k-akari/otel-example/internal/handler/httphandler"
-	"github.com/k-akari/otel-example/internal/infra/interceptor"
 	internal_otel "github.com/k-akari/otel-example/internal/infra/otel"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"
@@ -44,7 +43,6 @@ func run(ctx context.Context) error {
 			otelgrpc.WithTracerProvider(otel.GetTracerProvider()),
 			otelgrpc.WithPropagators(otel.GetTextMapPropagator()),
 		)),
-		interceptor.UnaryClientInterceptors(tracer),
 	}
 	conn, err := grpc.NewClient(env.EndpointGRPCServer, opts...)
 	if err != nil {
