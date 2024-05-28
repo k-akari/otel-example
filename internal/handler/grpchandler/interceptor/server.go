@@ -6,17 +6,18 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"go.opentelemetry.io/otel/trace"
+	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func UnaryServerInterceptors(tracer trace.Tracer) grpc.ServerOption {
+func UnaryServerInterceptors() grpc.ServerOption {
 	return grpc.UnaryInterceptor(
 		grpc_middleware.ChainUnaryServer(
 			func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-				ctx, span := tracer.Start(ctx, info.FullMethod)
+				const instrumentationName = "github.com/k-akari/otel-example/internal/handler/grpchandler/interceptor"
+				ctx, span := otel.Tracer(instrumentationName).Start(ctx, info.FullMethod)
 				defer span.End()
 				return handler(ctx, req)
 			},

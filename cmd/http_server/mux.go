@@ -8,18 +8,16 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/k-akari/otel-example/internal/handler/httphandler"
 	internal_middleware "github.com/k-akari/otel-example/internal/handler/httphandler/middleware"
-	"go.opentelemetry.io/otel/trace"
 )
 
-func newMux(tracer trace.Tracer, tsh *httphandler.TestService) http.Handler {
-	m := internal_middleware.New(tracer)
+func newMux(tsh *httphandler.TestService) http.Handler {
 	middlewares := []func(http.Handler) http.Handler{
 		middleware.RequestID,
 		middleware.RealIP,
 		middleware.Logger,
 		middleware.Recoverer,
 		middleware.Timeout(60 * time.Second),
-		m.StartSpan,
+		internal_middleware.StartSpan,
 	}
 
 	mux := chi.NewRouter()

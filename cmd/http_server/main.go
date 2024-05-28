@@ -27,7 +27,7 @@ func main() {
 func run(ctx context.Context) error {
 	env := mustNewConfig()
 
-	tracer, close, err := internal_otel.NewTracer(ctx, "http_server", env.EndpointJaeger)
+	close, err := internal_otel.NewTracer(ctx, "http_server", env.EndpointJaeger)
 	if err != nil {
 		return fmt.Errorf("failed to create tracer: %w", err)
 	}
@@ -60,7 +60,7 @@ func run(ctx context.Context) error {
 	tsc := testpb.NewTestServiceClient(conn)
 	tsh := httphandler.NewTestService(db, tsc)
 
-	mux := newMux(tracer, tsh)
+	mux := newMux(tsh)
 	s := newServer(l, mux)
 	return s.run(ctx)
 }
