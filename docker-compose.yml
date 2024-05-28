@@ -12,7 +12,7 @@ services:
     environment:
       - PORT=9080
       - ENDPOINT_GRPC_SERVER=grpcserver:8080
-      - ENDPOINT_JAEGER=http://jaeger:14268/api/traces
+      - ENDPOINT_JAEGER=jaeger:4317
     ports:
       - 9080:9080
     networks:
@@ -29,7 +29,7 @@ services:
       - go_mod:/go/pkg/mod
     environment:
       - PORT=8080
-      - ENDPOINT_JAEGER=http://jaeger:14268/api/traces
+      - ENDPOINT_JAEGER=jaeger:4317
     ports:
       - 8080:8080
     networks:
