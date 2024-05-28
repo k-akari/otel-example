@@ -40,7 +40,7 @@ services:
     ports:
       - 9080:9080
     networks:
-      - jaeger
+      - collector
       - dbhttpserver
     depends_on:
       db_for_http_server:
@@ -85,7 +85,7 @@ services:
     ports:
       - 8080:8080
     networks:
-      - jaeger
+      - collector
       - dbgrpcserver
     depends_on:
       db_for_grpc_server:
@@ -98,6 +98,8 @@ services:
       - ./otel-collector.yaml:/etc/otel-collector.yaml
     depends_on:
       - jaeger
+    networks:
+      - collector
 
   prometheus:
     image: prom/prometheus:latest
@@ -107,6 +109,8 @@ services:
       - 9090:9090
     depends_on:
       - otel-collector
+    networks:
+      - collector
 
   jaeger:
     container_name: jaeger
@@ -114,12 +118,12 @@ services:
     ports:
       - "16686:16686"
     networks:
-      - jaeger
+      - collector
 
 volumes:
   go_mod:
 
 networks:
-  jaeger:
+  collector:
   dbhttpserver:
   dbgrpcserver:
