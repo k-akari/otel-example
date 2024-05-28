@@ -6,7 +6,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	go.opentelemetry.io/otel v1.27.0
 	go.opentelemetry.io/otel/sdk/metric v1.27.0
-	golang.org/x/sync v0.6.0
+	golang.org/x/sync v0.7.0
 	google.golang.org/grpc v1.64.0
 )
 
