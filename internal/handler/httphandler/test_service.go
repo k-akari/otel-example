@@ -21,7 +21,7 @@ func (h *TestService) PingGRPC(w http.ResponseWriter, r *http.Request) {
 	var b struct {
 		Value             string `json:"value"`
 		SleepTimeMs       int32  `json:"sleep_time_ms"`
-		ErrorCodeReturned uint32 `json:"error_code_returned"`
+		ErrorCodeReturned int32  `json:"error_code_returned"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
 		respondJSON(ctx, w, &errResponse{Message: err.Error()}, http.StatusInternalServerError)
@@ -31,7 +31,7 @@ func (h *TestService) PingGRPC(w http.ResponseWriter, r *http.Request) {
 	_, err := h.tsc.Ping(ctx, &testpb.PingRequest{
 		Value:             b.Value,
 		SleepTimeMs:       b.SleepTimeMs,
-		ErrorCodeReturned: b.ErrorCodeReturned,
+		ErrorCodeReturned: uint32(b.ErrorCodeReturned),
 	})
 	if err != nil {
 		respondJSON(ctx, w, &errResponse{Message: err.Error()}, http.StatusInternalServerError)
