@@ -8,10 +8,9 @@ import (
 )
 
 func newTracerProvider(exporter *otlptrace.Exporter, resource *resource.Resource) *sdktrace.TracerProvider {
-	const samplingRate = 0.2
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
-		sdktrace.WithSampler(sdktrace.TraceIDRatioBased(samplingRate)),
+		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 		sdktrace.WithResource(resource),
 	)
 	otel.SetTracerProvider(tp)
