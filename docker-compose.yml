@@ -1,5 +1,24 @@
 version: "3.9"
 services:
+  db_for_http_server:
+    container_name: dbhttpserver
+    image: mysql:8.3
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: dbhttp
+      MYSQL_PASSWORD: password
+      MYSQL_USER: user
+    healthcheck:
+      test:
+        mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - dbhttpserver
+
   http_server:
     container_name: httpserver
     build:
@@ -10,13 +29,41 @@ services:
       - ./:/go/src/github.com/k-akari/otel-example
       - go_mod:/go/pkg/mod
     environment:
-      - PORT=9080
-      - ENDPOINT_GRPC_SERVER=grpcserver:8080
-      - ENDPOINT_JAEGER=jaeger:4317
+      PORT: 9080
+      ENDPOINT_GRPC_SERVER: grpcserver:8080
+      ENDPOINT_JAEGER: jaeger:4317
+      DB_USER: user
+      DB_PASS: password
+      DB_HOST: dbhttpserver
+      DB_PORT: 3306
+      DB_NAME: dbhttp
     ports:
       - 9080:9080
     networks:
       - jaeger
+      - dbhttpserver
+    depends_on:
+      db_for_http_server:
+        condition: service_healthy
+
+  db_for_grpc_server:
+    container_name: dbgrpcserver
+    image: mysql:8.3
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: dbgrpc
+      MYSQL_PASSWORD: password
+      MYSQL_USER: user
+    healthcheck:
+      test:
+        mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - dbgrpcserver
 
   grpc_server:
     container_name: grpcserver
@@ -28,12 +75,21 @@ services:
       - ./:/go/src/github.com/k-akari/otel-example
       - go_mod:/go/pkg/mod
     environment:
-      - PORT=8080
-      - ENDPOINT_JAEGER=jaeger:4317
+      PORT: 8080
+      ENDPOINT_JAEGER: jaeger:4317
+      DB_USER: user
+      DB_PASS: password
+      DB_HOST: dbgrpcserver
+      DB_PORT: 3306
+      DB_NAME: dbgrpc
     ports:
       - 8080:8080
     networks:
       - jaeger
+      - dbgrpcserver
+    depends_on:
+      db_for_grpc_server:
+        condition: service_healthy
 
   jaeger:
     container_name: jaeger
@@ -52,3 +108,5 @@ volumes:
 
 networks:
   jaeger:
+  dbhttpserver:
+  dbgrpcserver:

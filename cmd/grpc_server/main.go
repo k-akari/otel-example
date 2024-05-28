@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 
+	"github.com/k-akari/otel-example/internal/infra/database"
 	"github.com/k-akari/otel-example/internal/infra/otel"
 )
 
@@ -31,7 +32,13 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
+	db, close, err := database.NewClient(env.DBUser, env.DBPass, env.DBHost, env.DBName, env.DBPort)
+	if err != nil {
+		return fmt.Errorf("failed to create database client: %w", err)
+	}
+	defer close()
+
 	s := newServer(l, tracer)
-	s.registerServices()
+	s.registerServices(db)
 	return s.run(ctx)
 }

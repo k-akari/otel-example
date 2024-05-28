@@ -11,6 +11,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	handler "github.com/k-akari/otel-example/internal/handler/grpchandler"
 	"github.com/k-akari/otel-example/internal/handler/grpchandler/interceptor"
+	"github.com/k-akari/otel-example/internal/infra/database"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -33,12 +34,12 @@ func newServer(l net.Listener, tracer trace.Tracer) *server {
 	}
 }
 
-func (s *server) registerServices() {
+func (s *server) registerServices(db *database.Client) {
 	reflection.Register(s.srv)
 	hs := health.NewServer()
 	healthpb.RegisterHealthServer(s.srv, hs)
 
-	testpb.RegisterTestServiceServer(s.srv, handler.NewTestService())
+	testpb.RegisterTestServiceServer(s.srv, handler.NewTestService(db))
 }
 
 func (s *server) run(ctx context.Context) error {

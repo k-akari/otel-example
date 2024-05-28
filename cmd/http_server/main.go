@@ -9,6 +9,7 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	"github.com/k-akari/otel-example/internal/handler/httphandler"
+	"github.com/k-akari/otel-example/internal/infra/database"
 	internal_otel "github.com/k-akari/otel-example/internal/infra/otel"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"
@@ -37,6 +38,12 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
+	db, close, err := database.NewClient(env.DBUser, env.DBPass, env.DBHost, env.DBName, env.DBPort)
+	if err != nil {
+		return fmt.Errorf("failed to create database client: %w", err)
+	}
+	defer close()
+
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler(
@@ -51,7 +58,7 @@ func run(ctx context.Context) error {
 	defer conn.Close()
 
 	tsc := testpb.NewTestServiceClient(conn)
-	tsh := httphandler.NewTestService(tsc)
+	tsh := httphandler.NewTestService(db, tsc)
 
 	mux := newMux(tracer, tsh)
 	s := newServer(l, mux)
