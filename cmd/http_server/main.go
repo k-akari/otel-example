@@ -27,7 +27,12 @@ func main() {
 func run(ctx context.Context) error {
 	env := mustNewConfig()
 
-	close, err := internal_otel.Init(ctx, "http_server", env.EndpointJaeger)
+	connCollector, err := grpc.NewClient(env.EndpointCollector, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return fmt.Errorf("failed to create gRPC connection to collector: %w", err)
+	}
+
+	close, err := internal_otel.Init(ctx, "http_server", connCollector)
 	if err != nil {
 		return fmt.Errorf("failed to create tracer: %w", err)
 	}

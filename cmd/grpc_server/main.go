@@ -9,6 +9,8 @@ import (
 
 	"github.com/k-akari/otel-example/internal/infra/database"
 	"github.com/k-akari/otel-example/internal/infra/otel"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -21,7 +23,12 @@ func main() {
 func run(ctx context.Context) error {
 	env := mustNewConfig()
 
-	close, err := otel.Init(ctx, "grpc_server", env.EndpointJaeger)
+	connCollector, err := grpc.NewClient(env.EndpointCollector, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return fmt.Errorf("failed to create gRPC connection to collector: %w", err)
+	}
+
+	close, err := otel.Init(ctx, "grpc_server", connCollector)
 	if err != nil {
 		return fmt.Errorf("failed to create tracer: %w", err)
 	}
