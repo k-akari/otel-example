@@ -99,6 +99,15 @@ services:
     depends_on:
       - jaeger
 
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    depends_on:
+      - otel-collector
+
   jaeger:
     container_name: jaeger
     image: jaegertracing/all-in-one:latest
