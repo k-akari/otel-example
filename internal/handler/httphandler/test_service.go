@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type TestService struct {
@@ -34,8 +36,13 @@ func (h *TestService) PingGRPC(w http.ResponseWriter, r *http.Request) {
 		ErrorCodeReturned: uint32(b.ErrorCodeReturned),
 	})
 	if err != nil {
-		respondJSON(ctx, w, &errResponse{Message: err.Error()}, http.StatusInternalServerError)
-		return
+		if status.Code(err) != codes.Code(b.ErrorCodeReturned) {
+			respondJSON(ctx, w, &errResponse{Message: err.Error()}, http.StatusInternalServerError)
+			return
+		} else {
+			respondJSON(ctx, w, &errResponse{Message: err.Error()}, http.StatusOK)
+			return
+		}
 	}
 
 	respondJSON(ctx, w, nil, http.StatusOK)
