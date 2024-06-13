@@ -39,7 +39,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
-	github.com/uptrace/opentelemetry-go-extra/otelsql v0.3.0
+	github.com/uptrace/opentelemetry-go-extra/otelsql v0.3.1
 	go.opentelemetry.io/contrib/detectors/gcp v1.27.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.52.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.27.0
